@@ -1,39 +1,43 @@
-function calcularDigitosVerificadores(cpfParcial) {
-   
-    let soma1 = 0;
-    for (let i = 0; i < 9; i++) {
-        soma1 += parseInt(cpfParcial[i]) * (10 - i);
+function calculoLoop (contador, cpfsodigitos){
+    let soma = 0
+    for (i=contador; i>1; i--){
+        soma += cpfsodigitos[contador-i] * i
     }
-    let resto1 = soma1 % 11;
-    let digito1 = resto1 < 2 ? 0 : 11 - resto1;
-
-    
-    let soma2 = 0;
-    for (let i = 0; i < 9; i++) {
-        soma2 += parseInt(cpfParcial[i]) * (11 - i);
+    let resultado = soma%11
+    if(
+        (resultado<2 && cpfsodigitos[contador-1]!=0)
+        || (resultado >= 2 && cpfsodigitos[contador-1] != 11-resultado)
+        ){
+        return false
     }
-    soma2 += digito1 * 2;
-    let resto2 = soma2 % 11;
-    let digito2 = resto2 < 2 ? 0 : 11 - resto2;
-
-    return `${digito1}${digito2}`;
+    return true
 }
 
-function validarCPF(cpf) {
-    cpf = cpf.replace(/[^\d]/g, ''); 
-    if (cpf.length !== 11 || !/^\d+$/.test(cpf)) {
-        return false;
+function verificaCPF (cpf){
+    let cpfsodigitos = cpf
+    .replaceAll('.','')
+    .replaceAll('-','')
+    .split('')
+    if (cpfsodigitos.length != 11){
+        return 'CPF Inválido'
     }
-
-    let cpfParcial = cpf.slice(0, 9);
-    let digitosCalculados = calcularDigitosVerificadores(cpfParcial);
-
-    return cpf.slice(-2) === digitosCalculados;
+    let valida1digito = calculoLoop(10, cpfsodigitos)
+    if (!valida1digito){
+        return 'CPF Inválido'
+    }
+    let valida2digito = calculoLoop(11, cpfsodigitos)
+    if (!valida2digito){
+        return 'CPF Inválido'
+    }
+    return 'CPF VALIDO'
 }
-const cpf = "123.456.789-09";
-if (validarCPF(cpf)) {
-    console.log(`O CPF ${cpf} é válido.`);
-} else {
-    console.log(`O CPF ${cpf} é inválido.`);
-}
-
+let cpf = '090.851.019-56'
+console.log(verificaCPF(cpf))
+let cpf2 = '090.851.019-57'
+console.log(verificaCPF(cpf2))
+let cpf3 = '090.851.019-17'
+console.log(verificaCPF(cpf3))
+let cpf4 = '090.841.019-16'
+console.log(verificaCPF(cpf4))
+let cpf5 = '090.85v.019-16'
+console.log(verificaCPF(cpf5))
