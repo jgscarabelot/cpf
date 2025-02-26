@@ -1,33 +1,38 @@
-function calculoCNPJ(contador, cnpjSodigitos) {
+let cnpj = ''
+
+function gerarcnpjoto(){
+    cnpj = ''
+    for(let i = 0; i < 8; i++){
+        cnpj += Math.floor(Math.random()* 9)+ 1;
+    }
+    cnpj += '0001';
+}
+function verificarprimeironumero() {
+    let multiplicadores1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
     let soma = 0;
-    let multiplicadores = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-    
-    for (let i = 0; i < contador; i++) {
-        soma += cnpjSodigitos[i] * multiplicadores[i + (contador - 1)];
+
+    for (let i = 0; i < 12; i++) {
+        soma += parseInt(cnpj[i]) * multiplicadores1[i];
     }
-    
-    let resultado = soma % 11;
-    if (resultado < 2) {
-        return 0;
-    } else {
-        return 11 - resultado;
-    }
+    let resto = soma % 11
+    let primeironumero = (resto < 2) ? 0 : 11 - resto;
+    return primeironumero;
 }
 
-function geraCNPJ() {
-    let cnpjSodigitos = [];
-    for (let i = 0; i < 8; i++) {
-        cnpjSodigitos.push(Math.floor(Math.random() * 10));
+
+function verificarsegundonumero() {
+    let multiplicadores2 = [6,5,4,3,2,9,8,7,6,5,4,3,2];
+    let soma = 0;
+    for (let i = 0; i < 13; i++) {
+        soma += parseInt(cnpj[i]) * multiplicadores2[i];
     }
-
-    let primeiroDigito = calculoCNPJ(9, cnpjSodigitos);  
-    let segundoDigito = calculoCNPJ(10, [...cnpjSodigitos, primeiroDigito]); 
-    cnpjSodigitos.push(primeiroDigito, segundoDigito);  
-    
-    let cnpjFormatado = cnpjSodigitos.slice(0, 8).join(''); 
-    let cnpjComposto = `${cnpjFormatado.slice(0, 2)}.${cnpjFormatado.slice(2, 5)}.${cnpjFormatado.slice(5, 8)}/0001-`;
-    cnpjComposto += `${cnpjSodigitos[8]}${cnpjSodigitos[9]}`; 
-    return cnpjComposto;
+    let resto = soma % 11
+    let segundonumero = (resto < 2) ? 0 : 11 - resto;
+    return segundonumero;
 }
-
-console.log(geraCNPJ());
+gerarcnpjoto();
+let primeironumero = verificarprimeironumero()
+cnpj += primeironumero;
+let segundonumero = verificarsegundonumero()
+cnpj += segundonumero;
+console.log(cnpj)
