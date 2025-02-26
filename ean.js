@@ -1,25 +1,34 @@
-function calcularDigitoVerificadorEAN13(codigo) {
+function calculaDigitoVerificador(codigo) {
     let soma = 0;
     for (let i = 0; i < 12; i++) {
-        soma += parseInt(codigo[i]) * (i % 2 === 0 ? 1 : 3);
+        if (i % 2 === 0) {
+            soma += parseInt(codigo[i]) * 1; 
+        } else {
+            soma += parseInt(codigo[i]) * 3; 
+        }
     }
-    let resto = soma % 10;
-    return resto === 0 ? 0 : 10 - resto;
+    let digito = (10 - (soma % 10)) % 10; 
+    return digito;
 }
 
-function validarEAN13(codigo) {
-    codigo = codigo.replace(/-/g, ''); 
-    if (codigo.length !== 13 || !/^\d+$/.test(codigo)) {
-        return false;
+function validaEAN13(codigo) {
+    if (codigo.length !== 13) {
+        return 'Código de Barras Inválido';
     }
-    let digitoCalculado = calcularDigitoVerificadorEAN13(codigo.slice(0, 12));
-    return parseInt(codigo[12]) === digitoCalculado;
+
+    let digitoVerificadorCalculado = calculaDigitoVerificador(codigo);
+
+    if (digitoVerificadorCalculado !== parseInt(codigo[12])) {
+        return 'Código de Barras Inválido';
+    }
+
+    
+    let pais = codigo.slice(0, 3);
+    let fabricante = codigo.slice(3, 7);
+    let produto = codigo.slice(7, 12);
+
+    return `Cód. País: ${pais}, Fabricante: ${fabricante}, Produto: ${produto}`;
 }
 
-
-const codigoBarras = "123456789012";
-if (validarEAN13(codigoBarras + calcularDigitoVerificadorEAN13(codigoBarras))) {
-    console.log(`O código de barras ${codigoBarras} é válido.`);
-} else {
-    console.log(`O código de barras ${codigoBarras} é inválido.`);
-}
+let codigoBarras = "789654123987";
+console.log(validaEAN13(codigoBarras));
